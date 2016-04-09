@@ -166,7 +166,7 @@ public class Settings extends AppCompatActivity {
     public void onClickGoToMain(View v) {
 
 
-        if (v.getId() == com.example.alfredo.imp_controller.R.id.cancelButton) {
+        if (v.getId() == R.id.cancelButton) {
 
             Intent intent = new Intent(Settings.this, MainActivity.class);
             startActivity(intent);
