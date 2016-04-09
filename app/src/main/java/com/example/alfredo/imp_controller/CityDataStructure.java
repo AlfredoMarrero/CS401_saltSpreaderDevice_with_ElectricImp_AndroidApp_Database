@@ -6,8 +6,6 @@ package com.example.alfredo.imp_controller;
 
 public class CityDataStructure {
 
-
-
     private String cityName;
     private String countryName;
     private String cityID;
@@ -24,26 +22,27 @@ public class CityDataStructure {
     {
         return cityName;
     }
+
+    public void setCityName(String name) {
+        this.cityName = name;
+    }
+
     public String getCountry()
     {
         return countryName;
     }
+    // setter
 
     public String getCityID() {
         return cityID;
     }
-    // setter
-
-    public void setCityName(String name)
-    {
-        this.cityName = name;
-    }
-    public void setCountryName(String code)
-    {
-        this.countryName = code;
-    }
 
     public void setCityID(String cityId) {
         this.cityID = cityId;
+    }
+
+    public void setCountryName(String code)
+    {
+        this.countryName = code;
     }
 }
