@@ -1,0 +1,102 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView android:text="Device Controller" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:layout_gravity="center"/>
+
+    <TextView  android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:id="@+id/textview"/>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/LedStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:text="Spread salt ON:"
+                android:textSize="20dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Switch
+                android:id="@+id/mySwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="10dp"
+                android:background="@color/bt_white_pressed"/>
+
+        </LinearLayout>
+
+        <EditText android:layout_margin="10dp"
+            android:layout_height="60dp"
+            android:layout_width="fill_parent"
+            android:hint="Input the time for seconds"
+            android:id="@+id/time" />
+
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="send"
+        android:layout_margin="10dp"
+        android:id="@+id/button"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@android:color/darker_gray"/>
+
+
+    <TextView
+        android:id="@+id/switchStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:text="Device ON"
+        android:textSize="30dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Switch
+        android:id="@+id/AutoSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="15dp"
+        android:background="@color/bt_white_pressed"/>
+
+    <Button
+        android:layout_width="357dp"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:id="@+id/settings"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onButtonClick" />
+
+</LinearLayout>
