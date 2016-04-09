@@ -7,4 +7,4 @@ Components required for this project:
 - Android mobile application
 - Weather database
 - Electric imp
-- Device to spread the salt (including electric circuits and the physical structure to spread salt)
+- Device to spread salt (including electric circuits and the physical structure to spread salt)
