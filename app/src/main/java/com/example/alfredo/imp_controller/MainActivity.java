@@ -155,7 +155,7 @@ public class MainActivity extends ActionBarActivity {
     // calling a new activity
     public void onButtonClick(View view){
         // checking if the button pressed is the setting button
-        if(view.getId() == com.example.alfredo.imp_controller.R.id.settings){
+        if (view.getId() == R.id.settings) {
 
             Intent intent = new Intent(MainActivity.this, Settings.class);
             startActivity(intent);

@@ -100,7 +100,6 @@ public class Settings extends AppCompatActivity {
 
 
                 Toast.makeText(getApplicationContext(), "Returned " + cityID, Toast.LENGTH_LONG).show();
-                System.out.println("--------------------  "+ sleepTimerForImp);
                 // send info to electric imp
                 String address="https://agent.electricimp.com/LcD9l4csFvbl?cityId="+ cityID +"&sleepTimer="+sleepTimerForImp;
                 //String address="https://agent.electricimp.com/LcD9l4csFvbl?led="+ ledtostr +"&timer="+timetostr;
@@ -118,16 +117,17 @@ public class Settings extends AppCompatActivity {
                 }
 
 
-
-                if(v.getId() == com.example.alfredo.imp_controller.R.id.settings){
+                if (v.getId() == com.example.alfredo.imp_controller.R.id.saveButton) {
 
                     Intent intent = new Intent(Settings.this, MainActivity.class);
                     startActivity(intent);
                 }
 
 
+
             }
         });
+
 
     }
 
@@ -162,4 +162,42 @@ public class Settings extends AppCompatActivity {
             return null;
     }
 
+
+    public void onClickGoToMain(View v) {
+
+
+        if (v.getId() == com.example.alfredo.imp_controller.R.id.cancelButton) {
+
+            Intent intent = new Intent(Settings.this, MainActivity.class);
+            startActivity(intent);
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
