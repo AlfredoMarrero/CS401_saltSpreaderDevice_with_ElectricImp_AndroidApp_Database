@@ -1,0 +1,74 @@
+
+///////////////////////////////////////////////////////////////////////
+// Device code: this code runs on the microcontroller. Information 
+// and control commands are exchanged between the agent and the device
+// code. 
+// ///////////////////////////////////////////////////////////////////
+
+
+imp.configure("Salt spreader device Web Control", [], []); // Configure the imp
+
+//assigning the minimum and maximum values to write to the PWM control pin. 
+const SERVO_OPEN = 0.03;
+const SERVO_CLOSE = 0.1;
+
+//Variables for the pins:
+DC_motorPin <- hardware.pin9;  
+redPin <- hardware.pin1;
+servoMotor <- hardware.pin7;
+
+
+// Configure pins:
+redPin.configure(PWM_OUT, 0.01, 0);        // Pulse With Modulation fot the lED
+DC_motorPin.configure(DIGITAL_OUT);        // For digital output
+servoMotor.configure(PWM_OUT, 0.02, SERVO_CLOSE); // PWM fot the servo motor pin
+
+
+// function called by the agent. It turns the led and the motor on 
+function setMotor(ledState) 
+{
+    if(ledState == 1){
+    servoMotor.write(SERVO_OPEN);
+    DC_motorPin.write(ledState);
+    }
+    else{
+      //closing the servo motor first and then the DC motor afer to give it time to spread the remining salt
+     //servoMotor.write(SERVO_CLOSE);
+       deviceOff(); 
+    }
+}
+
+
+//Function called by the agent. 
+//It will turn off the microcontroller after the specified time in the Mobile App
+// or the default time if the weather database calls for snow
+function setTimer(time)
+{
+    if (time != 0)
+        imp.wakeup(time, deviceOff); 
+}
+
+
+// Important Agent Handler Stuff
+agent.on("turnOnMotor", setMotor);
+agent.on("timer", setTimer);
+
+
+
+//Turn off the led and the motor on the 
+function deviceOff()
+{
+    servoMotor.write(SERVO_CLOSE);
+    // turning off the DC motor aftet the servo motor has closed the 
+    //the hole through which slat falls onto the spinner disk
+   imp.wakeup(1.0, DC_motorOff);
+}
+
+// this function turns off the DC motor
+function DC_motorOff(){
+    
+   DC_motorPin.write(0);
+    redPin.write(0);
+}
+
+

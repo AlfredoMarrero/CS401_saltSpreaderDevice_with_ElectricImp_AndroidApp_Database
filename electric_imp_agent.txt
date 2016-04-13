@@ -1,0 +1,181 @@
+///////////////////////////////////////////////////////////////////////////
+//Agent code: this code runs on the cloud, all communication with the 
+// the device code goes through the agent code and then the agent communicates
+// with the device.
+//The agent receives information from a weather database and the Android app
+///////////////////////////////////////////////////////////////////////////////
+
+
+// Agent URL:
+server.log("electric imp Web Control Agent Online: " + http.agenturl());
+
+// default city ID which will be changed after the user enters
+//the city they live in in the mobile app
+cityID <-"";
+
+// seting the agent side to wakeup every 5 hours by default.
+// the user can change this configuration through the mobile app
+sleepTimerForRequest<- 18000;
+dayHours <- 24;
+secondsIn_minute <- 60;
+minutesIn_hour <- 60;
+autoStatus <- 1;
+
+
+// requestHandler handles all http requests coming into the agent
+// from the mobile app
+function requestHandler(request, response)  {
+
+    try { //exception handling, in case a runtime error occurs
+
+    // check if the user has selected to tun on/off the salt spreader device
+       if("auto" in request.query){
+            server.log(request.query.auto.tointeger());
+          
+           if (request.query.auto == "1"||request.query.auto == "0"){
+               // setting the auto variable to 0 or 1 to turn on or off the microcontroller
+             autoStatus = request.query.auto.tointeger();
+            }
+         }
+         
+       // check if the user has selected to tun on/off the salt spreader device
+       if("cityId" in request.query){
+            server.log("from json "+request.query.cityId.tointeger());
+    
+            // cityID = cityId.tosting();
+            cityID = request.query.cityId;
+             server.log("new cityID"+ cityID);
+         }
+         
+          if("sleepTimer" in request.query){
+                //server.log(" "+request.query.sleepTimer.tointeger());
+                
+               local sleepTimer =  request.query.sleepTimer.tointeger();
+               
+                // converting the user input into seconds
+             sleepTimerForRequest =(((dayHours /sleepTimer) * minutesIn_hour) * secondsIn_minute);
+
+                  //server.log("after assignment "+sleepTimer);
+                 server.log("after assignment "+sleepTimerForRequest);
+            }
+         
+        // check if the user sent led as a query parameter
+        if ("led" in request.query &&  autoStatus == 1) {
+
+           if ((request.query.led == "1") || (request.query.led == "0"))
+            {
+                // convert the led query parameter to an integer
+                local pinStatus = request.query.led.tointeger();
+
+                // send message to device
+                device.send("turnOnMotor", pinStatus); 
+            }
+        }
+     
+        // check if a "timer" query was received:
+        if ("timer" in request.query) {
+            
+            // convert to an integer, and pass it out to the imp.
+            device.send("timer", request.query.timer.tointeger());
+        }
+        if("auto" in request.query){
+            
+             if (request.query.auto == "1"){
+            
+                 loop();
+             }
+        }
+        
+        // send a response back saying everything was OK.
+        response.send(200, "OK");
+    } 
+    catch (ex) {  // if an error in the request occurs then we send this message
+        response.send(500, "Internal Server Error: " + ex);
+    }
+}
+
+
+// Response handler for the imp-weather server request
+function handleResponse(responseTable) {
+  
+    // Called when the imp receives a response from the remote service
+    if (responseTable.statuscode == 200) {
+        
+         //getting the json data from the response
+        local data = http.jsondecode(responseTable.body);
+        
+        local dataString =responseTable.body.tostring();
+
+       server.log(dataString);
+        
+        // chequin if the word snow is in the weather forecast JSON received from the weather server
+        if((dataString.find("snow") != null ||dataString.find("Snow") != null)&& autoStatus == 1){
+ 
+                local ledStatus1 = 1;
+
+              // sending the binary signal to the microcontroller to turn on the device 
+            device.send("led", ledStatus1); 
+            
+             // getting the amount of snow from the string "dataString"
+            local amountOfSnow = dataString.slice(dataString.find("snow"),dataString.find("snow") + 8 ) ;
+            
+            if(amountOfSnow == null){
+
+                amountOfSnow = dataString.slice(dataString.find("Snow"),dataString.find("Snow") + 8 );
+            }
+            else if (amountOfSnow == null){
+                
+                 amountOfSnow = dataString.slice(dataString.find("SNOW"),dataString.find("SNOW") + 8 );
+                
+            }
+            
+            
+           // converting string to int
+            local cmOfSnow = amountOfSnow.tointeger();
+            local timeToSpreadSalt;
+            // selectring the time the salt spreader device will be on depending on the amount of snow
+            if(cmOfSnow <= 5){
+                timeToSpreadSalt = 100;
+            }
+            else if(cmOfSnow > 5 && cmOfSnow <= 15 ){
+                 timeToSpreadSalt = 250;
+                
+            }
+            else if(cmOfSnow > 15) {
+                  timeToSpreadSalt = 400;
+             }
+            else{
+                 timeToSpreadSalt = 15;
+            }
+            
+             //  pass information out to the imp.
+            device.send("timer", timeToSpreadSalt);
+            
+        }
+    
+        server.log(responseTable.body);
+        
+    } else {// if the response from the weather server is an error response
+        // Log an error
+        server.log("Error response: " + responseTable.statuscode);
+    }
+}
+
+
+// limiting this function to a maximum of 60 calls per minute
+// because the weather database does not allow more that 60 
+//request per minute
+function loop(){
+      
+     server.log("cityID in loop " + cityID);
+     server.log("sleepTimerForRequest in loop "+sleepTimerForRequest);
+     webServiceURL <-"http://api.openweathermap.org/data/2.5/weather?id="+cityID+"&appid=f339f8503aa55bb431fde80d57ad036c"; 
+     local request = http.get(webServiceURL, {"":""});
+    // Send the request to the weather forecast asynchronously (This does not block the imp CPU)
+    // if we send the reqest synchronously then the imp CPU is blocked until the response is gotten
+    request.sendasync(handleResponse);
+    imp.wakeup( sleepTimerForRequest, loop);
+}
+
+// Set up a handler for HTTP requests. This is the function that we defined above.
+http.onrequest(requestHandler);
