@@ -1,4 +1,4 @@
-# Salt Spreader Device with electric imp002 Android App and Weather Database
+# Salt Spreader Device with electric imp002, Android App and Weather Database.
 
 Video presentation of the project: https://youtu.be/LWLyDzw4wiM
 
